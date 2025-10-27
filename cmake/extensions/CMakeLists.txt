@@ -49,16 +49,25 @@ set(IS_PY3_12_OR_GREATER 0)
 if(PY_VERSION VERSION_GREATER_EQUAL "3.12")
     set(IS_PY3_12_OR_GREATER 1)
 endif()
+set(IS_PY3_13_OR_GREATER 0)
+if(PY_VERSION VERSION_GREATER_EQUAL "3.13")
+    set(IS_PY3_13_OR_GREATER 1)
+endif()
 
 add_python_extension(array ${WIN32_BUILTIN} SOURCES arraymodule.c)
-add_python_extension(audioop ${WIN32_BUILTIN}
-    REQUIRES
-        HAVE_LIBM
-    SOURCES
-        audioop.c
-    LIBRARIES
-        ${M_LIBRARIES}
-)
+
+# removed in version 3.13
+if (NOT IS_PY3_13_OR_GREATER)
+    add_python_extension(audioop ${WIN32_BUILTIN}
+        REQUIRES
+            HAVE_LIBM
+        SOURCES
+            audioop.c
+        LIBRARIES
+            ${M_LIBRARIES}
+    )
+endif()
+
 add_python_extension(_bisect ${WIN32_BUILTIN} SOURCES _bisectmodule.c)
 add_python_extension(cmath
     REQUIRES HAVE_LIBM ${WIN32_BUILTIN}
